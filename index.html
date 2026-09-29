@@ -100,15 +100,8 @@
     }
 
     .hero::after {
-      content: "✝";
-      position: absolute;
-      right: 7%;
-      top: 10px;
-      font-size: 100px;
-      color: #ffd86b;
-      opacity: 0.55;
-      text-shadow:
-        0 0 25px rgba(255, 216, 107, 0.7);
+  display: none;
+}
     }
 
     .hero-content {
@@ -183,12 +176,15 @@
     }
 
     .hero-actions {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 12px;
-      margin-top: 20px;
-    }
+  position: absolute;
+  top: 35px;
+  right: 5%;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
     .updated {
       padding: 10px 16px;
