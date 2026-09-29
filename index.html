@@ -176,12 +176,13 @@ tr.Male td:first-child{box-shadow:inset 4px 0 0 var(--blue)}tr.Female td:first-c
 
 <script>
 // ▼ Paste your NEW dashboard Apps Script Web App URL (ends with /exec)
-const API_URL = "https://script.google.com/macros/s/AKfycbwXjpr01P49f-NYJltzBF73F4kCcURQ68VKDjUtgqvZOyyWBevhtf5_AsB2_c42vDEZ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxPkPTRlFQAGcI3rL1MzhP6WEUNHWssumSm_UmkBWxbEJvlQVsAucivH5z1nwjpmO2Z/exec";
 const REFRESH_MS = 15000, TIMEOUT_MS = 15000;
 
 const $ = id => document.getElementById(id);
 const NAVY = '#0f1c3a', BLUE = '#2453c9', RED = '#e59a9a';
-let charts = {}, busy = false;
+let charts = {}, busy = false, lastSig = '';
+const sigOf = d => { const { updatedAt, ...r } = d; return JSON.stringify(r); };
 
 function jsonp(url) {
   return new Promise((resolve, reject) => {
@@ -262,8 +263,12 @@ async function load() {
     if (!API_URL || API_URL.startsWith('PASTE_')) throw new Error('config');
     const res = await jsonp(API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=dashboard');
     if (!res || !res.success) throw new Error((res && res.message) || 'bad response');
-    render(res.data);
-    $('upd').textContent = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const sig = sigOf(res.data);
+    if (sig !== lastSig) { render(res.data); lastSig = sig; }
+    const t = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    $('upd').textContent = t;
+    try { localStorage.setItem('ymrStats', JSON.stringify({ d: res.data, t: t })); } catch (e) {}
+    if (!allList) setTimeout(() => fetchAll().catch(() => {}), 400);
     $('err').style.display = 'none'; $('app').classList.remove('err');
   } catch (e) {
     $('err').textContent = e.message === 'config'
@@ -271,6 +276,7 @@ async function load() {
       : 'Could not reach the dashboard API. Showing the last loaded numbers. Check your connection or the Apps Script deployment, then press Refresh.';
     $('err').style.display = 'block'; $('app').classList.add('err');
     if ($('upd').textContent === 'Loading…') $('upd').textContent = 'Not updated yet';
+    $('upd').textContent = $('upd').textContent.replace(' · updating…', ' · not updated');
   } finally {
     busy = false; $('app').classList.remove('loading'); $('refresh').disabled = false;
   }
@@ -288,17 +294,26 @@ function openList(filter, title) {
 }
 function closeList() { $('modal').classList.remove('open'); document.body.style.overflow = ''; }
 
+let allList = null, allSig = '';
+const filt = (l, f) => l.filter(p => f === 'all' || (f === 'checkedin' && p.active) || (f === 'notin' && !p.active) ||
+  (f === 'male' && p.active && p.gender === 'Male') || (f === 'female' && p.active && p.gender === 'Female'));
+
+async function fetchAll() {
+  const res = await jsonp(API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=participants&filter=all');
+  if (!res || !res.success) throw new Error((res && res.message) || 'bad response');
+  allList = res.data.participants || []; allSig = lastSig;
+  return allList;
+}
+
 async function loadList() {
-  body('<div class="msg">Loading list…</div>');
+  // show what we already have instantly, then refresh only if the numbers changed
+  if (allList) showList(filt(allList, curFilter)); else body('<div class="msg">Loading list…</div>');
+  if (allList && allSig === lastSig) return;
   try {
-    const res = await jsonp(API_URL + (API_URL.includes('?') ? '&' : '?') +
-      'action=participants&filter=' + encodeURIComponent(curFilter));
-    if (!res || !res.success) {
-      throw new Error((res && res.message) || 'bad response');
-    }
-    showList(res.data.participants || []);
+    const l = await fetchAll();
+    if ($('modal').classList.contains('open')) showList(filt(l, curFilter));
   } catch (e) {
-    body('<div class="msg">' + esc('Could not load the list. Check your connection and that the latest Apps Script version is deployed, then reopen it.') + '</div>');
+    if (!allList) body('<div class="msg">Could not load the list. Check your connection and that the latest Apps Script version is deployed, then reopen it.</div>');
   }
 }
 
@@ -327,9 +342,14 @@ $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeLi
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeList(); });
 
 makeCharts();
+try {
+  const c = JSON.parse(localStorage.getItem('ymrStats') || 'null');
+  if (c && c.d) { render(c.d); lastSig = sigOf(c.d); $('upd').textContent = c.t + ' · updating…'; }
+} catch (e) {}
 $('refresh').addEventListener('click', load);
 load();
-setInterval(load, REFRESH_MS);
+setInterval(() => { if (!document.hidden) load(); }, REFRESH_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
 </script>
 </body>
 </html>
