@@ -1,1567 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-   Admin Dashboard
-  </title>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    :root {
-      --navy: #071b3a;
-      --navy-2: #0b2b58;
-      --gold: #e7b84b;
-      --blue: #2196f3;
-      --green: #24b96b;
-      --red: #ef3d45;
-      --pink: #f05d91;
-      --purple: #8f5ce6;
-      --orange: #f6a832;
-      --sky: #4fc3f7;
-      --text: #0d2450;
-      --muted: #667085;
-      --page: #f4f8fc;
-      --card: #ffffff;
-      --border: #dce7f3;
-    }
-
-    body {
-      margin: 0;
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-      background: var(--page);
-      color: var(--text);
-    }
-
-    button {
-      font: inherit;
-    }
-
-    /* =========================
-       HEADER
-       ========================= */
-
-    .hero {
-      position: relative;
-      width: 100%;
-      min-height: 90px;
-      padding: 16px 5%;
-      background: linear-gradient(
-        135deg,
-        #06152e 0%,
-        #0b2c59 52%,
-        #06162e 100%
-      );
-      color: white;
-    }
-
-    .hero-actions {
-      position: absolute;
-      top: 18px;
-      right: 5%;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .updated {
-      padding: 10px 16px;
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.08);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .refresh-btn {
-      border: 0;
-      border-radius: 13px;
-      padding: 13px 22px;
-      background: linear-gradient(
-        135deg,
-        #168df0,
-        #2aabff
-      );
-      color: white;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-    }
-
-    .refresh-btn:disabled {
-      opacity: 0.55;
-      cursor: wait;
-    }
-
-    /* =========================
-       PAGE
-       ========================= */
-
-    .dashboard {
-      width: min(1400px, 92%);
-      margin: 34px auto 55px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .stat-card {
-      min-height: 205px;
-      padding: 26px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      box-shadow:
-        0 10px 28px rgba(16, 42, 72, 0.07);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::after {
-      content: "";
-      position: absolute;
-      left: -10%;
-      right: -10%;
-      bottom: -55px;
-      height: 110px;
-      border-radius: 50%;
-      opacity: 0.35;
-    }
-
-    .registered-card {
-      background:
-        linear-gradient(
-          145deg,
-          #fafdff,
-          #edf7ff
-        );
-    }
-
-    .registered-card::after {
-      background: #d7edff;
-    }
-
-    .checked-card {
-      background:
-        linear-gradient(
-          145deg,
-          #f8fff9,
-          #e9fff0
-        );
-    }
-
-    .checked-card::after {
-      background: #c7f2d5;
-    }
-
-    .pending-card {
-      background:
-        linear-gradient(
-          145deg,
-          #fffafb,
-          #fff0f1
-        );
-    }
-
-    .pending-card::after {
-      background: #ffd6da;
-    }
-
-    .stat-top {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .stat-icon {
-      width: 70px;
-      height: 70px;
-      min-width: 70px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 35px;
-      font-weight: 900;
-    }
-
-    .registered-icon {
-      background: #dcebff;
-      color: #1467cf;
-    }
-
-    .checked-icon {
-      background: #d2f8df;
-      color: #0ca354;
-    }
-
-    .pending-icon {
-      background: #ffdadd;
-      color: #d82835;
-    }
-
-    .stat-label {
-      font-size: 18px;
-      font-weight: 900;
-    }
-
-    .stat-number {
-      margin-top: 10px;
-      font-size: clamp(50px, 6vw, 78px);
-      line-height: 0.95;
-      font-weight: 900;
-    }
-
-    .gender-mini {
-      display: flex;
-      margin-top: 20px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(0,0,0,0.10);
-      gap: 0;
-    }
-
-    .gender-mini-item {
-      flex: 1;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .gender-mini-item + .gender-mini-item {
-      border-left: 1px solid rgba(0,0,0,0.10);
-    }
-
-    .gender-mini-number {
-      display: block;
-      font-size: 28px;
-      font-weight: 900;
-      margin-top: 2px;
-    }
-
-    .male {
-      color: #168cf0;
-    }
-
-    .female {
-      color: #ef5d91;
-    }
-
-    /* =========================
-       CHARTS
-       ========================= */
-
-    .charts-two {
-      display: grid;
-      grid-template-columns:
-        minmax(0, 1.1fr)
-        minmax(0, 0.9fr);
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .chart-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow:
-        0 10px 28px rgba(16, 42, 72, 0.06);
-    }
-
-    .chart-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
-      font-size: 24px;
-      font-weight: 900;
-    }
-
-    .chart-title-icon {
-      font-size: 28px;
-    }
-
-    /* Donut */
-
-    .donut-area {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-      min-height: 310px;
-    }
-
-    .donut {
-      width: 245px;
-      height: 245px;
-      min-width: 245px;
-      border-radius: 50%;
-      position: relative;
-      background:
-        conic-gradient(
-          var(--green) 0deg 324deg,
-          var(--red) 324deg 360deg
-        );
-      transform: rotate(-90deg);
-    }
-
-    .donut::after {
-      content: "";
-      position: absolute;
-      inset: 58px;
-      background: white;
-      border-radius: 50%;
-    }
-
-    .donut-center {
-      position: absolute;
-      z-index: 2;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      font-weight: 900;
-      transform: rotate(90deg);
-      font-size: 32px;
-    }
-
-    .donut-center span {
-      display: block;
-      font-size: 15px;
-      font-weight: 700;
-      margin-top: -55px;
-    }
-
-    .legend {
-      display: grid;
-      gap: 24px;
-    }
-
-    .legend-item {
-      display: grid;
-      grid-template-columns: 18px auto;
-      gap: 12px;
-      align-items: start;
-      font-size: 16px;
-    }
-
-    .legend-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      margin-top: 3px;
-    }
-
-    .legend-value {
-      font-size: 18px;
-      font-weight: 900;
-      margin-top: 3px;
-    }
-
-    /* Gender chart */
-
-    .gender-chart {
-      min-height: 310px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 70px;
-      padding: 30px 30px 10px;
-      border-left: 1px solid #dbe5ef;
-      border-bottom: 1px solid #dbe5ef;
-      background:
-        repeating-linear-gradient(
-          to top,
-          transparent 0 57px,
-          #e9eef4 58px 59px
-        );
-    }
-
-    .gender-column {
-      width: 110px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: center;
-      height: 250px;
-    }
-
-    .gender-bar {
-      width: 82px;
-      min-height: 4px;
-      border-radius: 9px 9px 0 0;
-      position: relative;
-    }
-
-    .gender-bar.male-bar {
-      background: var(--blue);
-    }
-
-    .gender-bar.female-bar {
-      background: var(--pink);
-    }
-
-    .bar-number {
-      position: absolute;
-      top: -36px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 25px;
-      font-weight: 900;
-    }
-
-    .gender-label {
-      margin-top: 13px;
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    /* Age chart */
-
-    .age-card {
-      margin-top: 18px;
-    }
-
-    .age-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .age-total {
-      font-size: 19px;
-      font-weight: 900;
-    }
-
-    .age-chart {
-      margin-top: 18px;
-      padding: 10px 0 4px;
-    }
-
-    .age-row {
-      display: grid;
-      grid-template-columns: 92px 1fr 42px;
-      align-items: center;
-      gap: 10px;
-      min-height: 62px;
-      position: relative;
-    }
-
-    .age-label {
-      font-size: 16px;
-      font-weight: 700;
-      text-align: right;
-    }
-
-    .age-track {
-      height: 40px;
-      border-radius: 6px;
-      position: relative;
-      overflow: visible;
-      background:
-        repeating-linear-gradient(
-          to right,
-          transparent 0 19.8%,
-          #e8edf3 20% 20.25%
-        );
-    }
-
-    .age-bar {
-      height: 40px;
-      border-radius: 0 7px 7px 0;
-      min-width: 4px;
-    }
-
-    .age-value {
-      font-size: 18px;
-      font-weight: 900;
-    }
-
-    .age-axis {
-      margin-left: 102px;
-      margin-right: 48px;
-      display: flex;
-      justify-content: space-between;
-      color: #667085;
-      font-size: 12px;
-      padding-top: 8px;
-    }
-
-    .age1 { background: var(--sky); }
-    .age2 { background: #4a8ff0; }
-    .age3 { background: var(--purple); }
-    .age4 { background: var(--orange); }
-    .age5 { background: #58c96c; }
-
-    /* =========================
-       STATES
-       ========================= */
-
-    .loading {
-      opacity: 0.6;
-    }
-
-    .error-box {
-      display: none;
-      margin-top: 18px;
-      padding: 14px 18px;
-      border-radius: 12px;
-      background: #fff0f1;
-      color: #a51e2a;
-      border: 1px solid #ffc8ce;
-      font-weight: 700;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* =========================
-       MOBILE
-       ========================= */
-
-    @media (max-width: 900px) {
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .charts-two {
-        grid-template-columns: 1fr;
-      }
-
-      .brand-row {
-        align-items: flex-start;
-      }
-
-      .hero {
-        min-height: 340px;
-      }
-
-      .hero-actions {
-        right: 4%;
-      }
-    }
-
-    @media (max-width: 600px) {
-
-      .hero {
-        min-height: 78px;
-        padding: 12px 14px;
-      }
-
-      .hero-actions {
-        position: static;
-        width: 100%;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-
-      .updated {
-        padding: 8px 11px;
-        font-size: 11px;
-        border-radius: 11px;
-      }
-
-      .refresh-btn {
-        padding: 10px 14px;
-        font-size: 13px;
-        border-radius: 11px;
-      }
-
-      .dashboard {
-        width: 94%;
-        margin-top: 20px;
-      }
-
-      .stat-card {
-        min-height: 175px;
-        padding: 20px;
-      }
-
-      .stat-icon {
-        width: 58px;
-        height: 58px;
-        min-width: 58px;
-        font-size: 28px;
-      }
-
-      .stat-label {
-        font-size: 15px;
-      }
-
-      .stat-number {
-        font-size: 56px;
-      }
-
-      .chart-card {
-        padding: 18px;
-      }
-
-      .chart-title {
-        font-size: 19px;
-      }
-
-      .donut-area {
-        flex-direction: column;
-        gap: 25px;
-      }
-
-      .donut {
-        width: 190px;
-        height: 190px;
-        min-width: 190px;
-      }
-
-      .donut::after {
-        inset: 45px;
-      }
-
-      .gender-chart {
-        gap: 30px;
-      }
-
-      .gender-column {
-        width: 85px;
-      }
-
-      .gender-bar {
-        width: 62px;
-      }
-
-      .age-row {
-        grid-template-columns: 58px 1fr 30px;
-      }
-
-      .age-label {
-        font-size: 12px;
-      }
-
-      .age-value {
-        font-size: 15px;
-      }
-
-      .age-track,
-      .age-bar {
-        height: 32px;
-      }
-
-      .age-axis {
-        margin-left: 68px;
-        margin-right: 34px;
-      }
-    }
-
-
-  </style>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1730">
+<title>Admin Dashboard – 8th Youth Revival Meet 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--navy:#081328;--navy2:#0f2350;--blue:#2453c9;--sky:#6c96f2;--gold:#d9ab2f;--ink:#0f1c3a;--mute:#66728f;--line:#e8ecf6;--red:#d95c5c;--soft:#f4f7fd}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;
+  background:radial-gradient(900px 420px at 85% -5%,#1d3f8f 0,transparent 65%),linear-gradient(180deg,var(--navy),var(--navy2) 70%);
+  background-attachment:fixed;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+
+/* Header */
+.bar{position:sticky;top:0;z-index:10;background:rgba(8,19,40,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.08);padding-top:env(safe-area-inset-top,0px)}
+.bar-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 20px}
+.upd{display:flex;align-items:center;gap:12px;color:#fff;min-width:0}
+.dot{width:10px;height:10px;border-radius:50%;background:#3ddc97;box-shadow:0 0 0 0 #3ddc9799;animation:p 2s infinite;flex:none}
+.err .dot{background:var(--red);animation:none}
+@keyframes p{70%{box-shadow:0 0 0 8px #3ddc9700}100%{box-shadow:0 0 0 0 #3ddc9700}}
+.upd small{display:block;font-size:12px;color:#9fb1da}
+.upd b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+button{font:inherit;cursor:pointer;border:0;background:var(--gold);color:#2a1e00;font-weight:700;font-size:14px;padding:10px 18px;border-radius:12px;
+  display:flex;gap:8px;align-items:center;flex:none;min-height:44px;transition:transform .1s,filter .15s}
+button:hover{filter:brightness(1.07)}button:active{transform:scale(.97)}
+button:focus-visible{outline:3px solid #fff;outline-offset:2px}button:disabled{opacity:.75;cursor:progress}
+button svg{width:16px;height:16px}.loading button svg{animation:r .8s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+
+.wrap{max-width:1180px;margin:0 auto;padding:20px}
+#err{display:none;background:#fff;border-left:5px solid var(--red);color:#7a1f1f;padding:12px 16px;border-radius:14px;margin-bottom:16px;font-size:14px;font-weight:500;line-height:1.45}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:1fr 1.5fr;margin-top:16px}
+
+/* Cards */
+.card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 12px 34px rgba(2,8,24,.3);min-width:0}
+.card h2{font-size:14px;font-weight:600;color:var(--mute)}
+.stat{display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none;background:#e9effd;color:var(--blue)}
+.ico svg{width:22px;height:22px}
+.gold .ico{background:#fbf3d9;color:#a67c00}.red .ico{background:#fdeaea;color:var(--red)}
+.big{font-size:46px;font-weight:800;line-height:1;letter-spacing:-1.5px;margin-top:10px;font-variant-numeric:tabular-nums}
+.sub{font-size:13px;color:var(--mute)}
+.meter{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--sky));transition:width .6s}
+.gold .meter i{background:linear-gradient(90deg,#b8891a,var(--gold))}.red .meter i{background:linear-gradient(90deg,#e08a8a,var(--red))}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{background:var(--soft);border-radius:14px;padding:10px 14px;font-size:13px;color:var(--mute)}
+.chip b{display:block;font-size:22px;color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums}
+.chip.f{background:#fbf5df}
+
+/* Charts */
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.head span{font-size:12px;color:var(--mute)}
+.ch{position:relative;height:250px;margin-top:8px}
+.age .ch{height:290px}
+.legend{display:grid;gap:8px;margin-top:14px}
+.legend div{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:13px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.legend b{font-weight:700;font-variant-numeric:tabular-nums}
+footer{text-align:center;color:#8fa2cf;font-size:12px;margin-top:22px;line-height:1.5}
+
+@media(max-width:960px){.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}
+  .stat{gap:12px}.big{font-size:40px}}
+@media(max-width:480px){
+  .bar-in{padding:10px 14px}.wrap{padding:14px}.grid,.g2{gap:12px}.g2{margin-top:12px}
+  .card{padding:18px;border-radius:18px}.big{font-size:38px}
+  button span{display:none}button{padding:0;width:44px;justify-content:center}
+  .ch{height:230px}.age .ch{height:260px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
-
-
 <body>
-
-  <!-- =========================
-       HEADER
-       ========================= -->
-
-  <header class="hero">
-
-  <div class="hero-actions">
-
-    <div class="updated">
-      🔄 Last Updated<br>
-      <strong id="updatedAt">
-        Loading...
-      </strong>
-    </div>
-
-    <button
-      class="refresh-btn"
-      id="refreshButton"
-      onclick="loadDashboard()"
-    >
-      ↻ Refresh
+<div id="app">
+  <div class="bar"><div class="bar-in">
+    <div class="upd"><span class="dot"></span><div><small>Last Updated</small><b id="upd">Loading…</b></div></div>
+    <button id="refresh" aria-label="Refresh statistics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg><span>Refresh</span>
     </button>
-
-  </div>
-
-</header>
-
-
-  <!-- =========================
-       DASHBOARD
-       ========================= -->
-
-  <main class="dashboard">
-
-    <div
-      class="error-box"
-      id="errorBox"
-    ></div>
-
-
-    <!-- SUMMARY CARDS -->
-
-    <section class="stats-grid">
-
-      <article class="stat-card registered-card">
-
-        <div class="stat-top">
-
-          <div class="stat-icon registered-icon">
-            👥
-          </div>
-
-          <div>
-            <div class="stat-label">
-              TOTAL REGISTERED
-            </div>
-
-            <div
-              class="stat-number"
-              id="totalRegistered"
-            >
-              0
-            </div>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="stat-card checked-card">
-
-        <div class="stat-top">
-
-          <div class="stat-icon checked-icon">
-            ✓
-          </div>
-
-          <div>
-            <div class="stat-label">
-              CHECKED IN
-            </div>
-
-            <div
-              class="stat-number"
-              id="checkedIn"
-            >
-              0
-            </div>
-          </div>
-
-        </div>
-
-
-        <div class="gender-mini">
-
-          <div class="gender-mini-item">
-
-            <span class="male">
-              👨 Male
-            </span>
-
-            <span
-              class="gender-mini-number male"
-              id="checkedInMale"
-            >
-              0
-            </span>
-
-          </div>
-
-
-          <div class="gender-mini-item">
-
-            <span class="female">
-              👩 Female
-            </span>
-
-            <span
-              class="gender-mini-number female"
-              id="checkedInFemale"
-            >
-              0
-            </span>
-
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="stat-card pending-card">
-
-        <div class="stat-top">
-
-          <div class="stat-icon pending-icon">
-            ×
-          </div>
-
-          <div>
-            <div class="stat-label">
-              NOT CHECKED IN
-            </div>
-
-            <div
-              class="stat-number"
-              id="notCheckedIn"
-            >
-              0
-            </div>
-          </div>
-
-        </div>
-
-      </article>
-
-    </section>
-
-
-    <!-- DONUT + GENDER -->
-
-    <section class="charts-two">
-
-
-      <article class="chart-card">
-
-        <div class="chart-title">
-          <span class="chart-title-icon">
-            ◔
-          </span>
-          Registration Overview
-        </div>
-
-
-        <div class="donut-area">
-
-          <div
-            class="donut"
-            id="attendanceDonut"
-          >
-
-            <div class="donut-center">
-              <div>
-                <strong id="donutTotal">
-                  0
-                </strong>
-                <span>
-                  Total
-                </span>
-              </div>
-            </div>
-
-          </div>
-
-
-          <div class="legend">
-
-            <div class="legend-item">
-
-              <span
-                class="legend-dot"
-                style="background:#24b96b"
-              ></span>
-
-              <div>
-                Checked In
-                <div
-                  class="legend-value"
-                  id="checkedLegend"
-                >
-                  0 (0%)
-                </div>
-              </div>
-
-            </div>
-
-
-            <div class="legend-item">
-
-              <span
-                class="legend-dot"
-                style="background:#ef3d45"
-              ></span>
-
-              <div>
-                Not Checked In
-                <div
-                  class="legend-value"
-                  id="pendingLegend"
-                >
-                  0 (0%)
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="chart-card">
-
-        <div class="chart-title">
-          <span class="chart-title-icon">
-            👥
-          </span>
-          Gender Distribution
-        </div>
-
-
-        <div class="gender-chart">
-
-          <div class="gender-column">
-
-            <div
-              class="gender-bar male-bar"
-              id="maleBar"
-              style="height:0%"
-            >
-              <div
-                class="bar-number"
-                id="maleBarValue"
-              >
-                0
-              </div>
-            </div>
-
-            <div class="gender-label">
-              Male
-            </div>
-
-          </div>
-
-
-          <div class="gender-column">
-
-            <div
-              class="gender-bar female-bar"
-              id="femaleBar"
-              style="height:0%"
-            >
-              <div
-                class="bar-number"
-                id="femaleBarValue"
-              >
-                0
-              </div>
-            </div>
-
-            <div class="gender-label">
-              Female
-            </div>
-
-          </div>
-
-        </div>
-
-      </article>
-
-    </section>
-
-
-    <!-- AGE-WISE HORIZONTAL BAR -->
-
-    <section class="chart-card age-card">
-
-      <div class="age-header">
-
-        <div class="chart-title" style="margin-bottom:0">
-
-          <span class="chart-title-icon">
-            ▥
-          </span>
-
-          Age-wise Registration
-
-        </div>
-
-        <div class="age-total">
-          Total:
-          <span id="ageTotal">
-            0
-          </span>
-        </div>
-
+  </div></div>
+
+  <main class="wrap">
+    <div id="err" role="alert"></div>
+
+    <section class="grid g3">
+      <div class="card stat">
+        <div class="top"><div><h2>Total Registered</h2><div class="big" id="total">–</div></div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div></div>
+        <div class="sub">Successful registrations</div>
       </div>
 
-
-      <div class="age-chart">
-
-
-        <div class="age-row">
-
-          <div class="age-label">
-            10 - 15
-          </div>
-
-          <div class="age-track">
-            <div
-              class="age-bar age1"
-              id="ageBar1"
-              style="width:0%"
-            ></div>
-          </div>
-
-          <div
-            class="age-value"
-            id="ageValue1"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="age-row">
-
-          <div class="age-label">
-            16 - 18
-          </div>
-
-          <div class="age-track">
-            <div
-              class="age-bar age2"
-              id="ageBar2"
-              style="width:0%"
-            ></div>
-          </div>
-
-          <div
-            class="age-value"
-            id="ageValue2"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="age-row">
-
-          <div class="age-label">
-            19 - 25
-          </div>
-
-          <div class="age-track">
-            <div
-              class="age-bar age3"
-              id="ageBar3"
-              style="width:0%"
-            ></div>
-          </div>
-
-          <div
-            class="age-value"
-            id="ageValue3"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="age-row">
-
-          <div class="age-label">
-            25 - 35
-          </div>
-
-          <div class="age-track">
-            <div
-              class="age-bar age4"
-              id="ageBar4"
-              style="width:0%"
-            ></div>
-          </div>
-
-          <div
-            class="age-value"
-            id="ageValue4"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="age-row">
-
-          <div class="age-label">
-            35 - 55
-          </div>
-
-          <div class="age-track">
-            <div
-              class="age-bar age5"
-              id="ageBar5"
-              style="width:0%"
-            ></div>
-          </div>
-
-          <div
-            class="age-value"
-            id="ageValue5"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="age-axis">
-          <span>0</span>
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
-        </div>
-
+      <div class="card stat gold">
+        <div class="top"><div><h2>Checked In</h2><div class="big" id="in">–</div></div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div></div>
+        <div class="meter"><i id="mIn"></i></div>
+        <div class="chips"><div class="chip">Male<b id="m">–</b></div><div class="chip f">Female<b id="f">–</b></div></div>
       </div>
 
+      <div class="card stat red">
+        <div class="top"><div><h2>Not Checked In</h2><div class="big" id="out">–</div></div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
+        <div class="meter"><i id="mOut"></i></div>
+        <div class="sub">Registered, yet to arrive</div>
+      </div>
     </section>
 
+    <section class="grid g2">
+      <div class="card">
+        <div class="head"><h2>Registration Overview</h2></div>
+        <div class="ch"><canvas id="cDonut"></canvas></div>
+        <div class="legend" id="lg"></div>
+      </div>
+      <div class="card age">
+        <div class="head"><h2>Age-wise Registration</h2><span>Number of people</span></div>
+        <div class="ch"><canvas id="cAge"></canvas></div>
+      </div>
+    </section>
 
-    <div class="footer">
-      8th Youth Revival Meet 2026 • Admin Dashboard
-    </div>
-
+    <footer>8th Youth Revival Meet 2026 · Admin view<br>Refreshes automatically every 15 seconds</footer>
   </main>
-
-
-  <script>
-
-    /*
-     * =====================================================
-     * ONLY CHANGE THIS URL
-     * =====================================================
-     *
-     * After deploying the NEW Admin Dashboard Apps Script
-     * as a Web App, paste its /exec URL here.
-     *
-     * Do NOT paste the scanner Apps Script URL here.
-     */
-
-    const API_URL =
-      "https://script.google.com/macros/s/AKfycbz9GsJs2tBxdymvWyLCVRVkSbUolfbbdg1tzgoCJihSBit3B83kyaVjks7aIJFZ3YSX/exec";
-
-
-    let loading = false;
-
-
-    function loadDashboard() {
-
-      if (loading) {
-        return;
-      }
-
-      if (
-        !API_URL ||
-        API_URL.includes(
-          "PASTE_NEW_ADMIN_DASHBOARD"
-        )
-      ) {
-
-        showError(
-          "Admin Dashboard API URL has not been added yet."
-        );
-
-        return;
-      }
-
-      loading = true;
-
-      const button =
-        document.getElementById(
-          "refreshButton"
-        );
-
-      button.disabled = true;
-      button.textContent = "↻ Loading...";
-
-
-      const callbackName =
-        "dashboardCallback_" +
-        Date.now();
-
-
-      const script =
-        document.createElement("script");
-
-
-      const url =
-        API_URL +
-        "?action=dashboard" +
-        "&callback=" +
-        callbackName;
-
-
-      window[callbackName] =
-        function(response) {
-
-          try {
-
-            if (
-              !response ||
-              !response.success
-            ) {
-
-              throw new Error(
-                response &&
-                response.message
-                  ? response.message
-                  : "No valid response."
-              );
-            }
-
-            renderDashboard(
-              response.data
-            );
-
-            hideError();
-
-          } catch (error) {
-
-            showError(
-              error.message ||
-              "Unable to load dashboard."
-            );
-
-          } finally {
-
-            cleanupRequest(
-              callbackName,
-              script
-            );
-
-          }
-        };
-
-
-      script.onerror =
-        function() {
-
-          showError(
-            "Unable to connect to the Admin Dashboard API."
-          );
-
-          cleanupRequest(
-            callbackName,
-            script
-          );
-        };
-
-
-      script.src = url;
-
-      document.body.appendChild(
-        script
-      );
-
-
-      // Safety timeout.
-      setTimeout(
-        function() {
-
-          if (loading) {
-
-            showError(
-              "Dashboard request timed out."
-            );
-
-            cleanupRequest(
-              callbackName,
-              script
-            );
-          }
-
-        },
-        15000
-      );
-    }
-
-
-    function cleanupRequest(
-      callbackName,
-      script
-    ) {
-
-      delete window[callbackName];
-
-      if (script) {
-        script.remove();
-      }
-
-      loading = false;
-
-      const button =
-        document.getElementById(
-          "refreshButton"
-        );
-
-      button.disabled = false;
-      button.textContent = "↻ Refresh";
-    }
-
-
-    function renderDashboard(data) {
-
-      const total =
-        Number(data.totalRegistered || 0);
-
-      const checked =
-        Number(data.checkedIn || 0);
-
-      const pending =
-        Number(data.notCheckedIn || 0);
-
-      const male =
-        Number(data.checkedInMale || 0);
-
-      const female =
-        Number(data.checkedInFemale || 0);
-
-
-      document.getElementById(
-        "totalRegistered"
-      ).textContent = total;
-
-
-      document.getElementById(
-        "checkedIn"
-      ).textContent = checked;
-
-
-      document.getElementById(
-        "notCheckedIn"
-      ).textContent = pending;
-
-
-      document.getElementById(
-        "checkedInMale"
-      ).textContent = male;
-
-
-      document.getElementById(
-        "checkedInFemale"
-      ).textContent = female;
-
-
-      document.getElementById(
-        "donutTotal"
-      ).textContent = total;
-
-
-      const checkedPercent =
-        total > 0
-          ? Math.round(
-              (checked / total) * 100
-            )
-          : 0;
-
-
-      const pendingPercent =
-        total > 0
-          ? 100 - checkedPercent
-          : 0;
-
-
-      document.getElementById(
-        "checkedLegend"
-      ).textContent =
-        checked +
-        " (" +
-        checkedPercent +
-        "%)";
-
-
-      document.getElementById(
-        "pendingLegend"
-      ).textContent =
-        pending +
-        " (" +
-        pendingPercent +
-        "%)";
-
-
-      const checkedAngle =
-        checkedPercent * 3.6;
-
-
-      document.getElementById(
-        "attendanceDonut"
-      ).style.background =
-        "conic-gradient(" +
-        "#24b96b 0deg " +
-        checkedAngle +
-        "deg, " +
-        "#ef3d45 " +
-        checkedAngle +
-        "deg 360deg)";
-
-
-      const genderMax =
-        Math.max(
-          male,
-          female,
-          1
-        );
-
-
-      document.getElementById(
-        "maleBar"
-      ).style.height =
-        ((male / genderMax) * 82) + "%";
-
-
-      document.getElementById(
-        "femaleBar"
-      ).style.height =
-        ((female / genderMax) * 82) + "%";
-
-
-      document.getElementById(
-        "maleBarValue"
-      ).textContent = male;
-
-
-      document.getElementById(
-        "femaleBarValue"
-      ).textContent = female;
-
-
-      const ageGroups =
-        data.ageGroups || {};
-
-
-      const ages = [
-        Number(ageGroups["10-15"] || 0),
-        Number(ageGroups["16-18"] || 0),
-        Number(ageGroups["19-25"] || 0),
-        Number(ageGroups["25-35"] || 0),
-        Number(ageGroups["35-55"] || 0)
-      ];
-
-
-      const maxAge =
-        Math.max(
-          ...ages,
-          1
-        );
-
-
-      ages.forEach(
-        function(value, index) {
-
-          document.getElementById(
-            "ageBar" + (index + 1)
-          ).style.width =
-            ((value / maxAge) * 100) + "%";
-
-
-          document.getElementById(
-            "ageValue" + (index + 1)
-          ).textContent =
-            value;
-        }
-      );
-
-
-      document.getElementById(
-        "ageTotal"
-      ).textContent =
-        ages.reduce(
-          function(sum, value) {
-            return sum + value;
-          },
-          0
-        );
-
-
-      document.getElementById(
-        "updatedAt"
-      ).textContent =
-        data.updatedAt || "Just now";
-    }
-
-
-    function showError(message) {
-
-      const box =
-        document.getElementById(
-          "errorBox"
-        );
-
-      box.textContent =
-        message;
-
-      box.style.display =
-        "block";
-    }
-
-
-    function hideError() {
-
-      const box =
-        document.getElementById(
-          "errorBox"
-        );
-
-      box.style.display =
-        "none";
-    }
-
-
-    // Load automatically when the page opens.
-    window.addEventListener(
-      "load",
-      loadDashboard
-    );
-
-
-    // Auto-refresh every 15 seconds.
-    setInterval(
-      function() {
-
-        if (!loading) {
-          loadDashboard();
-        }
-
-      },
-      15000
-    );
-
-  </script>
-
+</div>
+
+<script>
+// ▼ Paste your NEW dashboard Apps Script Web App URL (ends with /exec)
+const API_URL = "PASTE_DASHBOARD_APPS_SCRIPT_URL_HERE";
+const REFRESH_MS = 15000, TIMEOUT_MS = 15000;
+
+const $ = id => document.getElementById(id);
+const NAVY = '#0f1c3a', BLUE = '#2453c9', RED = '#e59a9a';
+let charts = {}, busy = false;
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + Math.floor(Math.random() * 1e4);
+    const s = document.createElement('script');
+    const done = () => { clearTimeout(t); delete window[cb]; s.remove(); };
+    const t = setTimeout(() => { done(); reject(new Error('timeout')); }, TIMEOUT_MS);
+    window[cb] = d => { done(); resolve(d); };
+    s.onerror = () => { done(); reject(new Error('network')); };
+    s.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb + '&_=' + Date.now();
+    document.head.appendChild(s);
+  });
+}
+
+// Count labels at the end of each horizontal bar
+const valuePlugin = {
+  id: 'vals',
+  afterDatasetsDraw(c) {
+    const { ctx } = c;
+    ctx.save(); ctx.font = '700 13px Plus Jakarta Sans, sans-serif'; ctx.fillStyle = NAVY;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    c.getDatasetMeta(0).data.forEach((b, i) => ctx.fillText(c.data.datasets[0].data[i], b.x + 8, b.y));
+    ctx.restore();
+  }
+};
+// Check-in percentage in the middle of the donut
+const centerPlugin = {
+  id: 'center',
+  afterDraw(c) {
+    const a = c.getDatasetMeta(0).data[0]; if (!a) return;
+    const d = c.data.datasets[0].data, t = d[0] + d[1];
+    const { ctx } = c; ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = NAVY; ctx.font = '800 30px Plus Jakarta Sans, sans-serif';
+    ctx.fillText((t ? Math.round(d[0] / t * 100) : 0) + '%', a.x, a.y - 8);
+    ctx.fillStyle = '#66728f'; ctx.font = '500 12px Plus Jakarta Sans, sans-serif';
+    ctx.fillText('checked in', a.x, a.y + 16); ctx.restore();
+  }
+};
+
+function makeCharts() {
+  Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+  Chart.defaults.color = '#66728f';
+  const base = { responsive: true, maintainAspectRatio: false, animation: { duration: 500 } };
+  charts.donut = new Chart($('cDonut'), { type: 'doughnut', plugins: [centerPlugin],
+    data: { labels: ['Checked In', 'Not Checked In'], datasets: [{ data: [0, 0], backgroundColor: [BLUE, RED], borderWidth: 4, borderColor: '#fff', hoverOffset: 4 }] },
+    options: { ...base, cutout: '70%', plugins: { legend: { display: false } } } });
+  charts.age = new Chart($('cAge'), { type: 'bar', plugins: [valuePlugin],
+    data: { labels: [], datasets: [{ data: [], backgroundColor: BLUE, borderRadius: 8, maxBarThickness: 32 }] },
+    options: { ...base, indexAxis: 'y', layout: { padding: { right: 36 } }, plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#eef1f8' }, border: { display: false } },
+                y: { grid: { display: false }, border: { display: false }, ticks: { font: { weight: 600 } } } } } });
+}
+
+function render(d) {
+  const t = d.totalRegistered || 0, pct = n => t ? (n / t * 100).toFixed(1) + '%' : '0%';
+  $('total').textContent = d.totalRegistered;
+  $('in').textContent = d.checkedIn;
+  $('out').textContent = d.notCheckedIn;
+  $('m').textContent = d.checkedInMale;
+  $('f').textContent = d.checkedInFemale;
+  $('mIn').style.width = pct(d.checkedIn);
+  $('mOut').style.width = pct(d.notCheckedIn);
+
+  charts.donut.data.datasets[0].data = [d.checkedIn, d.notCheckedIn]; charts.donut.update();
+  $('lg').innerHTML =
+    `<div><span><i style="background:${BLUE}"></i>Checked In</span><b>${d.checkedIn} · ${pct(d.checkedIn)}</b></div>` +
+    `<div><span><i style="background:${RED}"></i>Not Checked In</span><b>${d.notCheckedIn} · ${pct(d.notCheckedIn)}</b></div>`;
+
+  const keys = Object.keys(d.ageGroups);
+  charts.age.data.labels = keys.map(k => k.replace('-', '–'));
+  charts.age.data.datasets[0].data = keys.map(k => d.ageGroups[k]); charts.age.update();
+}
+
+async function load() {
+  if (busy) return;
+  busy = true; $('app').classList.add('loading'); $('refresh').disabled = true;
+  try {
+    if (!API_URL || API_URL.startsWith('PASTE_')) throw new Error('config');
+    const res = await jsonp(API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=dashboard');
+    if (!res || !res.success) throw new Error((res && res.message) || 'bad response');
+    render(res.data);
+    $('upd').textContent = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    $('err').style.display = 'none'; $('app').classList.remove('err');
+  } catch (e) {
+    $('err').textContent = e.message === 'config'
+      ? 'Dashboard API URL is not set. Add your Apps Script Web App URL in index.html.'
+      : 'Could not reach the dashboard API. Showing the last loaded numbers. Check your connection or the Apps Script deployment, then press Refresh.';
+    $('err').style.display = 'block'; $('app').classList.add('err');
+    if ($('upd').textContent === 'Loading…') $('upd').textContent = 'Not updated yet';
+  } finally {
+    busy = false; $('app').classList.remove('loading'); $('refresh').disabled = false;
+  }
+}
+
+makeCharts();
+$('refresh').addEventListener('click', load);
+load();
+setInterval(load, REFRESH_MS);
+</script>
 </body>
-
 </html>
