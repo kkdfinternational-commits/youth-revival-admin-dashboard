@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    8th Youth Revival Meet 2026 - Admin Dashboard
+  </title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #071b3a;
+      --navy-2: #0b2b58;
+      --gold: #e7b84b;
+      --blue: #2196f3;
+      --green: #24b96b;
+      --red: #ef3d45;
+      --pink: #f05d91;
+      --purple: #8f5ce6;
+      --orange: #f6a832;
+      --sky: #4fc3f7;
+      --text: #0d2450;
+      --muted: #667085;
+      --page: #f4f8fc;
+      --card: #ffffff;
+      --border: #dce7f3;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      padding: 28px 5vw 34px;
+      background:
+        radial-gradient(
+          circle at 82% 20%,
+          rgba(255, 205, 92, 0.22),
+          transparent 24%
+        ),
+        radial-gradient(
+          circle at 8% 75%,
+          rgba(255, 255, 255, 0.12),
+          transparent 22%
+        ),
+        linear-gradient(
+          135deg,
+          #06152e 0%,
+          #0b2c59 52%,
+          #06162e 100%
+        );
+      color: white;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: -5%;
+      right: -5%;
+      bottom: -82px;
+      height: 140px;
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          165deg,
+          transparent 0 43%,
+          var(--gold) 44% 48%,
+          #0a2851 49% 100%
+        );
+      opacity: 0.95;
+    }
+
+    .hero::after {
+      content: "✝";
+      position: absolute;
+      right: 7%;
+      top: 10px;
+      font-size: 100px;
+      color: #ffd86b;
+      opacity: 0.55;
+      text-shadow:
+        0 0 25px rgba(255, 216, 107, 0.7);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .brand-row {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .church-logo {
+      width: 118px;
+      min-width: 118px;
+      text-align: center;
+    }
+
+    .cross {
+      font-size: 62px;
+      line-height: 0.9;
+      color: white;
+      text-shadow:
+        0 0 15px rgba(255,255,255,0.35);
+    }
+
+    .church-name {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+    }
+
+    .event-info {
+      flex: 1;
+    }
+
+    .event-title {
+      margin: 0;
+      font-size: clamp(27px, 4vw, 58px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .event-title .eight {
+      color: var(--gold);
+    }
+
+    .dashboard-title {
+      margin-top: 8px;
+      font-size: clamp(16px, 2vw, 28px);
+      letter-spacing: 8px;
+      font-weight: 600;
+    }
+
+    .event-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 22px;
+      font-size: 17px;
+    }
+
+    .event-detail {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .updated {
+      padding: 10px 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .refresh-btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 13px 22px;
+      background: linear-gradient(
+        135deg,
+        #168df0,
+        #2aabff
+      );
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        0 8px 20px rgba(0,0,0,0.18);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    /* =========================
+       PAGE
+       ========================= */
+
+    .dashboard {
+      width: min(1400px, 92%);
+      margin: 34px auto 55px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      min-height: 205px;
+      padding: 26px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow:
+        0 10px 28px rgba(16, 42, 72, 0.07);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      left: -10%;
+      right: -10%;
+      bottom: -55px;
+      height: 110px;
+      border-radius: 50%;
+      opacity: 0.35;
+    }
+
+    .registered-card {
+      background:
+        linear-gradient(
+          145deg,
+          #fafdff,
+          #edf7ff
+        );
+    }
+
+    .registered-card::after {
+      background: #d7edff;
+    }
+
+    .checked-card {
+      background:
+        linear-gradient(
+          145deg,
+          #f8fff9,
+          #e9fff0
+        );
+    }
+
+    .checked-card::after {
+      background: #c7f2d5;
+    }
+
+    .pending-card {
+      background:
+        linear-gradient(
+          145deg,
+          #fffafb,
+          #fff0f1
+        );
+    }
+
+    .pending-card::after {
+      background: #ffd6da;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .stat-icon {
+      width: 70px;
+      height: 70px;
+      min-width: 70px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 35px;
+      font-weight: 900;
+    }
+
+    .registered-icon {
+      background: #dcebff;
+      color: #1467cf;
+    }
+
+    .checked-icon {
+      background: #d2f8df;
+      color: #0ca354;
+    }
+
+    .pending-icon {
+      background: #ffdadd;
+      color: #d82835;
+    }
+
+    .stat-label {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .stat-number {
+      margin-top: 10px;
+      font-size: clamp(50px, 6vw, 78px);
+      line-height: 0.95;
+      font-weight: 900;
+    }
+
+    .gender-mini {
+      display: flex;
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,0.10);
+      gap: 0;
+    }
+
+    .gender-mini-item {
+      flex: 1;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .gender-mini-item + .gender-mini-item {
+      border-left: 1px solid rgba(0,0,0,0.10);
+    }
+
+    .gender-mini-number {
+      display: block;
+      font-size: 28px;
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .male {
+      color: #168cf0;
+    }
+
+    .female {
+      color: #ef5d91;
+    }
+
+    /* =========================
+       CHARTS
+       ========================= */
+
+    .charts-two {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1.1fr)
+        minmax(0, 0.9fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .chart-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow:
+        0 10px 28px rgba(16, 42, 72, 0.06);
+    }
+
+    .chart-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .chart-title-icon {
+      font-size: 28px;
+    }
+
+    /* Donut */
+
+    .donut-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      min-height: 310px;
+    }
+
+    .donut {
+      width: 245px;
+      height: 245px;
+      min-width: 245px;
+      border-radius: 50%;
+      position: relative;
+      background:
+        conic-gradient(
+          var(--green) 0deg 324deg,
+          var(--red) 324deg 360deg
+        );
+      transform: rotate(-90deg);
+    }
+
+    .donut::after {
+      content: "";
+      position: absolute;
+      inset: 58px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .donut-center {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 900;
+      transform: rotate(90deg);
+      font-size: 32px;
+    }
+
+    .donut-center span {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: -55px;
+    }
+
+    .legend {
+      display: grid;
+      gap: 24px;
+    }
+
+    .legend-item {
+      display: grid;
+      grid-template-columns: 18px auto;
+      gap: 12px;
+      align-items: start;
+      font-size: 16px;
+    }
+
+    .legend-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      margin-top: 3px;
+    }
+
+    .legend-value {
+      font-size: 18px;
+      font-weight: 900;
+      margin-top: 3px;
+    }
+
+    /* Gender chart */
+
+    .gender-chart {
+      min-height: 310px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 70px;
+      padding: 30px 30px 10px;
+      border-left: 1px solid #dbe5ef;
+      border-bottom: 1px solid #dbe5ef;
+      background:
+        repeating-linear-gradient(
+          to top,
+          transparent 0 57px,
+          #e9eef4 58px 59px
+        );
+    }
+
+    .gender-column {
+      width: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 250px;
+    }
+
+    .gender-bar {
+      width: 82px;
+      min-height: 4px;
+      border-radius: 9px 9px 0 0;
+      position: relative;
+    }
+
+    .gender-bar.male-bar {
+      background: var(--blue);
+    }
+
+    .gender-bar.female-bar {
+      background: var(--pink);
+    }
+
+    .bar-number {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .gender-label {
+      margin-top: 13px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* Age chart */
+
+    .age-card {
+      margin-top: 18px;
+    }
+
+    .age-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .age-total {
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .age-chart {
+      margin-top: 18px;
+      padding: 10px 0 4px;
+    }
+
+    .age-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 42px;
+      align-items: center;
+      gap: 10px;
+      min-height: 62px;
+      position: relative;
+    }
+
+    .age-label {
+      font-size: 16px;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .age-track {
+      height: 40px;
+      border-radius: 6px;
+      position: relative;
+      overflow: visible;
+      background:
+        repeating-linear-gradient(
+          to right,
+          transparent 0 19.8%,
+          #e8edf3 20% 20.25%
+        );
+    }
+
+    .age-bar {
+      height: 40px;
+      border-radius: 0 7px 7px 0;
+      min-width: 4px;
+    }
+
+    .age-value {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .age-axis {
+      margin-left: 102px;
+      margin-right: 48px;
+      display: flex;
+      justify-content: space-between;
+      color: #667085;
+      font-size: 12px;
+      padding-top: 8px;
+    }
+
+    .age1 { background: var(--sky); }
+    .age2 { background: #4a8ff0; }
+    .age3 { background: var(--purple); }
+    .age4 { background: var(--orange); }
+    .age5 { background: #58c96c; }
+
+    /* =========================
+       STATES
+       ========================= */
+
+    .loading {
+      opacity: 0.6;
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: #fff0f1;
+      color: #a51e2a;
+      border: 1px solid #ffc8ce;
+      font-weight: 700;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 900px) {
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-two {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-row {
+        align-items: flex-start;
+      }
+
+      .hero {
+        min-height: 340px;
+      }
+
+      .hero-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .hero {
+        padding: 20px 18px 42px;
+      }
+
+      .dashboard {
+        width: 94%;
+        margin-top: 20px;
+      }
+
+      .brand-row {
+        gap: 12px;
+      }
+
+      .church-logo {
+        width: 76px;
+        min-width: 76px;
+      }
+
+      .cross {
+        font-size: 42px;
+      }
+
+      .church-name {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+      }
+
+      .dashboard-title {
+        letter-spacing: 4px;
+        font-size: 13px;
+      }
+
+      .event-details {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .updated {
+        text-align: center;
+      }
+
+      .refresh-btn {
+        width: 100%;
+      }
+
+      .stat-card {
+        min-height: 175px;
+        padding: 20px;
+      }
+
+      .stat-icon {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        font-size: 28px;
+      }
+
+      .stat-label {
+        font-size: 15px;
+      }
+
+      .stat-number {
+        font-size: 56px;
+      }
+
+      .chart-card {
+        padding: 18px;
+      }
+
+      .chart-title {
+        font-size: 19px;
+      }
+
+      .donut-area {
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      .donut {
+        width: 190px;
+        height: 190px;
+        min-width: 190px;
+      }
+
+      .donut::after {
+        inset: 45px;
+      }
+
+      .gender-chart {
+        gap: 30px;
+      }
+
+      .gender-column {
+        width: 85px;
+      }
+
+      .gender-bar {
+        width: 62px;
+      }
+
+      .age-row {
+        grid-template-columns: 58px 1fr 30px;
+      }
+
+      .age-label {
+        font-size: 12px;
+      }
+
+      .age-value {
+        font-size: 15px;
+      }
+
+      .age-track,
+      .age-bar {
+        height: 32px;
+      }
+
+      .age-axis {
+        margin-left: 68px;
+        margin-right: 34px;
+      }
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <!-- =========================
+       HEADER
+       ========================= -->
+
+  <header class="hero">
+
+    <div class="hero-content">
+
+      <div class="brand-row">
+
+        <div class="church-logo">
+          <div class="cross">✝</div>
+          <div class="church-name">
+            KIRUPASANAM<br>
+            CHURCH
+          </div>
+        </div>
+
+        <div class="event-info">
+
+          <h1 class="event-title">
+            <span class="eight">8</span>th
+            YOUTH REVIVAL MEET 2026
+          </h1>
+
+          <div class="dashboard-title">
+            ADMIN DASHBOARD
+          </div>
+
+          <div class="event-details">
+
+            <div class="event-detail">
+              📍 Kirupasanam Church,
+              Orlem, Malad (W.), Mumbai – 64
+            </div>
+
+            <div class="event-detail">
+              📅 October 2, 2026
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="hero-actions">
+
+        <div class="updated">
+          🔄 Last Updated<br>
+          <strong id="updatedAt">
+            Loading...
+          </strong>
+        </div>
+
+        <button
+          class="refresh-btn"
+          id="refreshButton"
+          onclick="loadDashboard()"
+        >
+          ↻ Refresh
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       DASHBOARD
+       ========================= -->
+
+  <main class="dashboard">
+
+    <div
+      class="error-box"
+      id="errorBox"
+    ></div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <section class="stats-grid">
+
+      <article class="stat-card registered-card">
+
+        <div class="stat-top">
+
+          <div class="stat-icon registered-icon">
+            👥
+          </div>
+
+          <div>
+            <div class="stat-label">
+              TOTAL REGISTERED
+            </div>
+
+            <div
+              class="stat-number"
+              id="totalRegistered"
+            >
+              0
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card checked-card">
+
+        <div class="stat-top">
+
+          <div class="stat-icon checked-icon">
+            ✓
+          </div>
+
+          <div>
+            <div class="stat-label">
+              CHECKED IN
+            </div>
+
+            <div
+              class="stat-number"
+              id="checkedIn"
+            >
+              0
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="gender-mini">
+
+          <div class="gender-mini-item">
+
+            <span class="male">
+              👨 Male
+            </span>
+
+            <span
+              class="gender-mini-number male"
+              id="checkedInMale"
+            >
+              0
+            </span>
+
+          </div>
+
+
+          <div class="gender-mini-item">
+
+            <span class="female">
+              👩 Female
+            </span>
+
+            <span
+              class="gender-mini-number female"
+              id="checkedInFemale"
+            >
+              0
+            </span>
+
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card pending-card">
+
+        <div class="stat-top">
+
+          <div class="stat-icon pending-icon">
+            ×
+          </div>
+
+          <div>
+            <div class="stat-label">
+              NOT CHECKED IN
+            </div>
+
+            <div
+              class="stat-number"
+              id="notCheckedIn"
+            >
+              0
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- DONUT + GENDER -->
+
+    <section class="charts-two">
+
+
+      <article class="chart-card">
+
+        <div class="chart-title">
+          <span class="chart-title-icon">
+            ◔
+          </span>
+          Registration Overview
+        </div>
+
+
+        <div class="donut-area">
+
+          <div
+            class="donut"
+            id="attendanceDonut"
+          >
+
+            <div class="donut-center">
+              <div>
+                <strong id="donutTotal">
+                  0
+                </strong>
+                <span>
+                  Total
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="legend">
+
+            <div class="legend-item">
+
+              <span
+                class="legend-dot"
+                style="background:#24b96b"
+              ></span>
+
+              <div>
+                Checked In
+                <div
+                  class="legend-value"
+                  id="checkedLegend"
+                >
+                  0 (0%)
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="legend-item">
+
+              <span
+                class="legend-dot"
+                style="background:#ef3d45"
+              ></span>
+
+              <div>
+                Not Checked In
+                <div
+                  class="legend-value"
+                  id="pendingLegend"
+                >
+                  0 (0%)
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="chart-card">
+
+        <div class="chart-title">
+          <span class="chart-title-icon">
+            👥
+          </span>
+          Gender Distribution
+        </div>
+
+
+        <div class="gender-chart">
+
+          <div class="gender-column">
+
+            <div
+              class="gender-bar male-bar"
+              id="maleBar"
+              style="height:0%"
+            >
+              <div
+                class="bar-number"
+                id="maleBarValue"
+              >
+                0
+              </div>
+            </div>
+
+            <div class="gender-label">
+              Male
+            </div>
+
+          </div>
+
+
+          <div class="gender-column">
+
+            <div
+              class="gender-bar female-bar"
+              id="femaleBar"
+              style="height:0%"
+            >
+              <div
+                class="bar-number"
+                id="femaleBarValue"
+              >
+                0
+              </div>
+            </div>
+
+            <div class="gender-label">
+              Female
+            </div>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- AGE-WISE HORIZONTAL BAR -->
+
+    <section class="chart-card age-card">
+
+      <div class="age-header">
+
+        <div class="chart-title" style="margin-bottom:0">
+
+          <span class="chart-title-icon">
+            ▥
+          </span>
+
+          Age-wise Registration
+
+        </div>
+
+        <div class="age-total">
+          Total:
+          <span id="ageTotal">
+            0
+          </span>
+        </div>
+
+      </div>
+
+
+      <div class="age-chart">
+
+
+        <div class="age-row">
+
+          <div class="age-label">
+            10 - 15
+          </div>
+
+          <div class="age-track">
+            <div
+              class="age-bar age1"
+              id="ageBar1"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <div
+            class="age-value"
+            id="ageValue1"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="age-row">
+
+          <div class="age-label">
+            16 - 18
+          </div>
+
+          <div class="age-track">
+            <div
+              class="age-bar age2"
+              id="ageBar2"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <div
+            class="age-value"
+            id="ageValue2"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="age-row">
+
+          <div class="age-label">
+            19 - 25
+          </div>
+
+          <div class="age-track">
+            <div
+              class="age-bar age3"
+              id="ageBar3"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <div
+            class="age-value"
+            id="ageValue3"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="age-row">
+
+          <div class="age-label">
+            25 - 35
+          </div>
+
+          <div class="age-track">
+            <div
+              class="age-bar age4"
+              id="ageBar4"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <div
+            class="age-value"
+            id="ageValue4"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="age-row">
+
+          <div class="age-label">
+            35 - 55
+          </div>
+
+          <div class="age-track">
+            <div
+              class="age-bar age5"
+              id="ageBar5"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <div
+            class="age-value"
+            id="ageValue5"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="age-axis">
+          <span>0</span>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <div class="footer">
+      8th Youth Revival Meet 2026 • Admin Dashboard
+    </div>
+
+  </main>
+
+
+  <script>
+
+    /*
+     * =====================================================
+     * ONLY CHANGE THIS URL
+     * =====================================================
+     *
+     * After deploying the NEW Admin Dashboard Apps Script
+     * as a Web App, paste its /exec URL here.
+     *
+     * Do NOT paste the scanner Apps Script URL here.
+     */
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbz9GsJs2tBxdymvWyLCVRVkSbUolfbbdg1tzgoCJihSBit3B83kyaVjks7aIJFZ3YSX/exec";
+
+
+    let loading = false;
+
+
+    function loadDashboard() {
+
+      if (loading) {
+        return;
+      }
+
+      if (
+        !API_URL ||
+        API_URL.includes(
+          "PASTE_NEW_ADMIN_DASHBOARD"
+        )
+      ) {
+
+        showError(
+          "Admin Dashboard API URL has not been added yet."
+        );
+
+        return;
+      }
+
+      loading = true;
+
+      const button =
+        document.getElementById(
+          "refreshButton"
+        );
+
+      button.disabled = true;
+      button.textContent = "↻ Loading...";
+
+
+      const callbackName =
+        "dashboardCallback_" +
+        Date.now();
+
+
+      const script =
+        document.createElement("script");
+
+
+      const url =
+        API_URL +
+        "?action=dashboard" +
+        "&callback=" +
+        callbackName;
+
+
+      window[callbackName] =
+        function(response) {
+
+          try {
+
+            if (
+              !response ||
+              !response.success
+            ) {
+
+              throw new Error(
+                response &&
+                response.message
+                  ? response.message
+                  : "No valid response."
+              );
+            }
+
+            renderDashboard(
+              response.data
+            );
+
+            hideError();
+
+          } catch (error) {
+
+            showError(
+              error.message ||
+              "Unable to load dashboard."
+            );
+
+          } finally {
+
+            cleanupRequest(
+              callbackName,
+              script
+            );
+
+          }
+        };
+
+
+      script.onerror =
+        function() {
+
+          showError(
+            "Unable to connect to the Admin Dashboard API."
+          );
+
+          cleanupRequest(
+            callbackName,
+            script
+          );
+        };
+
+
+      script.src = url;
+
+      document.body.appendChild(
+        script
+      );
+
+
+      // Safety timeout.
+      setTimeout(
+        function() {
+
+          if (loading) {
+
+            showError(
+              "Dashboard request timed out."
+            );
+
+            cleanupRequest(
+              callbackName,
+              script
+            );
+          }
+
+        },
+        15000
+      );
+    }
+
+
+    function cleanupRequest(
+      callbackName,
+      script
+    ) {
+
+      delete window[callbackName];
+
+      if (script) {
+        script.remove();
+      }
+
+      loading = false;
+
+      const button =
+        document.getElementById(
+          "refreshButton"
+        );
+
+      button.disabled = false;
+      button.textContent = "↻ Refresh";
+    }
+
+
+    function renderDashboard(data) {
+
+      const total =
+        Number(data.totalRegistered || 0);
+
+      const checked =
+        Number(data.checkedIn || 0);
+
+      const pending =
+        Number(data.notCheckedIn || 0);
+
+      const male =
+        Number(data.checkedInMale || 0);
+
+      const female =
+        Number(data.checkedInFemale || 0);
+
+
+      document.getElementById(
+        "totalRegistered"
+      ).textContent = total;
+
+
+      document.getElementById(
+        "checkedIn"
+      ).textContent = checked;
+
+
+      document.getElementById(
+        "notCheckedIn"
+      ).textContent = pending;
+
+
+      document.getElementById(
+        "checkedInMale"
+      ).textContent = male;
+
+
+      document.getElementById(
+        "checkedInFemale"
+      ).textContent = female;
+
+
+      document.getElementById(
+        "donutTotal"
+      ).textContent = total;
+
+
+      const checkedPercent =
+        total > 0
+          ? Math.round(
+              (checked / total) * 100
+            )
+          : 0;
+
+
+      const pendingPercent =
+        total > 0
+          ? 100 - checkedPercent
+          : 0;
+
+
+      document.getElementById(
+        "checkedLegend"
+      ).textContent =
+        checked +
+        " (" +
+        checkedPercent +
+        "%)";
+
+
+      document.getElementById(
+        "pendingLegend"
+      ).textContent =
+        pending +
+        " (" +
+        pendingPercent +
+        "%)";
+
+
+      const checkedAngle =
+        checkedPercent * 3.6;
+
+
+      document.getElementById(
+        "attendanceDonut"
+      ).style.background =
+        "conic-gradient(" +
+        "#24b96b 0deg " +
+        checkedAngle +
+        "deg, " +
+        "#ef3d45 " +
+        checkedAngle +
+        "deg 360deg)";
+
+
+      const genderMax =
+        Math.max(
+          male,
+          female,
+          1
+        );
+
+
+      document.getElementById(
+        "maleBar"
+      ).style.height =
+        ((male / genderMax) * 82) + "%";
+
+
+      document.getElementById(
+        "femaleBar"
+      ).style.height =
+        ((female / genderMax) * 82) + "%";
+
+
+      document.getElementById(
+        "maleBarValue"
+      ).textContent = male;
+
+
+      document.getElementById(
+        "femaleBarValue"
+      ).textContent = female;
+
+
+      const ageGroups =
+        data.ageGroups || {};
+
+
+      const ages = [
+        Number(ageGroups["10-15"] || 0),
+        Number(ageGroups["16-18"] || 0),
+        Number(ageGroups["19-25"] || 0),
+        Number(ageGroups["25-35"] || 0),
+        Number(ageGroups["35-55"] || 0)
+      ];
+
+
+      const maxAge =
+        Math.max(
+          ...ages,
+          1
+        );
+
+
+      ages.forEach(
+        function(value, index) {
+
+          document.getElementById(
+            "ageBar" + (index + 1)
+          ).style.width =
+            ((value / maxAge) * 100) + "%";
+
+
+          document.getElementById(
+            "ageValue" + (index + 1)
+          ).textContent =
+            value;
+        }
+      );
+
+
+      document.getElementById(
+        "ageTotal"
+      ).textContent =
+        ages.reduce(
+          function(sum, value) {
+            return sum + value;
+          },
+          0
+        );
+
+
+      document.getElementById(
+        "updatedAt"
+      ).textContent =
+        data.updatedAt || "Just now";
+    }
+
+
+    function showError(message) {
+
+      const box =
+        document.getElementById(
+          "errorBox"
+        );
+
+      box.textContent =
+        message;
+
+      box.style.display =
+        "block";
+    }
+
+
+    function hideError() {
+
+      const box =
+        document.getElementById(
+          "errorBox"
+        );
+
+      box.style.display =
+        "none";
+    }
+
+
+    // Load automatically when the page opens.
+    window.addEventListener(
+      "load",
+      loadDashboard
+    );
+
+
+    // Auto-refresh every 15 seconds.
+    setInterval(
+      function() {
+
+        if (!loading) {
+          loadDashboard();
+        }
+
+      },
+      15000
+    );
+
+  </script>
+
+</body>
+
+</html>
