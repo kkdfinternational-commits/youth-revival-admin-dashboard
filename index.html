@@ -69,6 +69,37 @@ button svg{width:16px;height:16px}.loading button svg{animation:r .8s linear inf
 .legend b{font-weight:700;font-variant-numeric:tabular-nums}
 footer{text-align:center;color:#8fa2cf;font-size:12px;margin-top:22px;line-height:1.5}
 
+.click{cursor:pointer;transition:transform .12s}.click:hover{transform:translateY(-2px)}
+.click:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.link{color:var(--blue);font-weight:600}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,10,24,.72)}
+.modal.open{display:flex}
+.sheet{background:#fff;border-radius:22px;width:100%;max-width:1000px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.sh-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
+.sh-head h3{font-size:18px;font-weight:800}.sh-head span{font-size:13px;color:var(--mute)}
+.x{background:var(--soft);color:var(--ink);width:44px;padding:0;justify-content:center;border-radius:12px;font-size:22px}
+.sh-body{overflow:auto;padding:0 22px 18px;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{position:sticky;top:0;background:#fff;text-align:left;font-size:12px;color:var(--mute);font-weight:600;padding:14px 10px;border-bottom:1px solid var(--line)}
+td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n{font-weight:700}td a{color:var(--ink);text-decoration:none}
+tr.Male td:first-child{box-shadow:inset 4px 0 0 var(--blue)}tr.Female td:first-child{box-shadow:inset 4px 0 0 var(--gold)}
+.tag{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:700;background:var(--soft);color:var(--mute)}
+.tag.Male{background:#e4ecfd;color:var(--blue)}.tag.Female{background:#fbf0cc;color:#8a6500}
+.msg{padding:44px 10px;text-align:center;color:var(--mute);font-size:14px;line-height:1.5}
+.pw{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.pw input{font:inherit;padding:12px 14px;border:1px solid #cfd6e8;border-radius:12px;min-width:220px;min-height:44px}
+.pw button{width:auto;padding:0 22px}
+@media(max-width:640px){
+  .modal{padding:0;align-items:flex-end}.sheet{max-height:92vh;border-radius:22px 22px 0 0}
+  .sh-head{padding:14px 16px}.sh-body{padding:0 14px 14px}
+  thead{display:none}table,tbody,tr,td{display:block}
+  tr{border:1px solid var(--line);border-left-width:5px;border-radius:14px;padding:10px 14px;margin:10px 0}
+  tr.Male{border-left-color:var(--blue)}tr.Female{border-left-color:var(--gold)}
+  tr.Male td:first-child,tr.Female td:first-child{box-shadow:none}
+  td{border:0;padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right}
+  td::before{content:attr(data-l);color:var(--mute);font-size:12px;text-align:left;flex:none}
+  td.n{font-size:16px}}
 @media(max-width:960px){.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}
   .stat{gap:12px}.big{font-size:40px}}
 @media(max-width:480px){
@@ -92,24 +123,28 @@ footer{text-align:center;color:#8fa2cf;font-size:12px;margin-top:22px;line-heigh
     <div id="err" role="alert"></div>
 
     <section class="grid g3">
-      <div class="card stat">
+      <div class="card stat click" data-list="all" data-title="All Registered" role="button" tabindex="0" aria-label="View all registered participants">
         <div class="top"><div><h2>Total Registered</h2><div class="big" id="total">–</div></div>
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div></div>
-        <div class="sub">Successful registrations</div>
+        <div class="sub link">Tap to view all names ›</div>
       </div>
 
-      <div class="card stat gold">
+      <div class="card stat gold click" data-list="checkedin" data-title="Checked In" role="button" tabindex="0" aria-label="View all checked-in participants">
         <div class="top"><div><h2>Checked In</h2><div class="big" id="in">–</div></div>
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div></div>
         <div class="meter"><i id="mIn"></i></div>
-        <div class="chips"><div class="chip">Male<b id="m">–</b></div><div class="chip f">Female<b id="f">–</b></div></div>
+        <div class="sub link">Tap for all checked in, or pick Male / Female ›</div>
+        <div class="chips">
+          <div class="chip click" data-list="male" data-title="Checked In · Male" role="button" tabindex="0" aria-label="View checked-in males">Male<b id="m">–</b></div>
+          <div class="chip f click" data-list="female" data-title="Checked In · Female" role="button" tabindex="0" aria-label="View checked-in females">Female<b id="f">–</b></div>
+        </div>
       </div>
 
-      <div class="card stat red">
+      <div class="card stat red click" data-list="notin" data-title="Not Checked In" role="button" tabindex="0" aria-label="View participants not checked in">
         <div class="top"><div><h2>Not Checked In</h2><div class="big" id="out">–</div></div>
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
         <div class="meter"><i id="mOut"></i></div>
-        <div class="sub">Registered, yet to arrive</div>
+        <div class="sub link">Tap to view list ›</div>
       </div>
     </section>
 
@@ -129,9 +164,19 @@ footer{text-align:center;color:#8fa2cf;font-size:12px;margin-top:22px;line-heigh
   </main>
 </div>
 
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet">
+    <div class="sh-head">
+      <div><h3 id="mTitle">Participants</h3><span id="cnt"></span></div>
+      <button class="x" id="close" aria-label="Close">×</button>
+    </div>
+    <div class="sh-body" id="mBody"></div>
+  </div>
+</div>
+
 <script>
 // ▼ Paste your NEW dashboard Apps Script Web App URL (ends with /exec)
-const API_URL = "https://script.google.com/macros/s/AKfycbwGLpqzxHKtcL3Cel4Q_JvcZXiRgrKTGJN5W5mC51Luxv2ThITUTwDaO_-A2xe7NzOb/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwb41UTqbCQUF6li7bHH1YmGjiUVe4KcM6Bx2D3WW8emRxSWLfiT2xgn6LN-Kd9A0FJ/exec";
 const REFRESH_MS = 15000, TIMEOUT_MS = 15000;
 
 const $ = id => document.getElementById(id);
@@ -230,6 +275,56 @@ async function load() {
     busy = false; $('app').classList.remove('loading'); $('refresh').disabled = false;
   }
 }
+
+/* ---- Participant lists ---- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const body = m => { $('mBody').innerHTML = m; };
+let curFilter = 'all';
+
+function openList(filter, title) {
+  curFilter = filter; $('mTitle').textContent = title; $('cnt').textContent = '';
+  $('modal').classList.add('open'); document.body.style.overflow = 'hidden';
+  loadList();
+}
+function closeList() { $('modal').classList.remove('open'); document.body.style.overflow = ''; }
+
+async function loadList() {
+  body('<div class="msg">Loading list…</div>');
+  try {
+    const res = await jsonp(API_URL + (API_URL.includes('?') ? '&' : '?') +
+      'action=participants&filter=' + encodeURIComponent(curFilter));
+    if (!res || !res.success) {
+      throw new Error((res && res.message) || 'bad response');
+    }
+    showList(res.data.participants || []);
+  } catch (e) {
+    body('<div class="msg">' + esc('Could not load the list. Check your connection and that the latest Apps Script version is deployed, then reopen it.') + '</div>');
+  }
+}
+
+function showList(list) {
+  $('cnt').textContent = list.length + ' people';
+  if (!list.length) { body('<div class="msg">No one in this list yet.</div>'); return; }
+  const rows = list.map(p => {
+    const g = p.gender === 'Male' || p.gender === 'Female' ? p.gender : '';
+    const tel = String(p.mobile || '').replace(/[^\d+]/g, '');
+    return `<tr class="${g}"><td data-l="ID">${esc(p.id) || '–'}</td>
+      <td class="n" data-l="Name">${esc(p.name) || '–'}</td>
+      <td data-l="Mobile">${tel ? `<a href="tel:${esc(tel)}">${esc(p.mobile)}</a>` : '–'}</td>
+      <td data-l="Gender"><span class="tag ${g}">${esc(p.gender) || '–'}</span></td>
+      <td data-l="Church">${esc(p.church) || '–'}</td></tr>`;
+  }).join('');
+  body(`<table><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Gender</th><th>Church</th></tr></thead><tbody>${rows}</tbody></table>`);
+}
+
+document.querySelectorAll('[data-list]').forEach(el => {
+  const go = () => openList(el.dataset.list, el.dataset.title);
+  el.addEventListener('click', e => { e.stopPropagation(); go(); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); go(); } });
+});
+$('close').addEventListener('click', closeList);
+$('modal').addEventListener('click', e => { if (e.target === $('modal')) closeList(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeList(); });
 
 makeCharts();
 $('refresh').addEventListener('click', load);
